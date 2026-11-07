@@ -1,0 +1,86 @@
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+
+import '../models/jadwal.dart';
+import '../models/profil.dart';
+import '../models/tugas.dart';
+
+/// Thrown when the server answers with an unexpected status code.
+class ApiException implements Exception {
+  final int statusCode;
+  final String message;
+
+  const ApiException(this.statusCode, this.message);
+
+  @override
+  String toString() => 'ApiException($statusCode): $message';
+}
+
+/// The only class that talks to the network.
+/// Pass a [http.Client] (e.g. MockClient) in tests.
+class ApiService {
+  static const String baseUrl = String.fromEnvironment(
+    'API_URL',
+    defaultValue: 'http://10.0.2.2:8080',
+  );
+  static const Duration timeout = Duration(seconds: 10);
+
+  final http.Client _client;
+
+  ApiService({http.Client? client}) : _client = client ?? http.Client();
+
+  Uri _uri(String path) => Uri.parse('$baseUrl$path');
+
+  dynamic _decode(http.Response res) => jsonDecode(utf8.decode(res.bodyBytes));
+
+  void _ensureStatus(http.Response res, int expected) {
+    if (res.statusCode != expected) {
+      throw ApiException(res.statusCode, 'Unexpected status');
+    }
+  }
+
+  // ---------------- Member 1 ----------------
+
+  /// POST /tugas.
+  Future<Tugas> createTask(Tugas task) async {
+    final body = task.toJson()..remove('id');
+    final res = await _client
+        .post(
+          _uri('/tugas'),
+          headers: {'Content-Type': 'application/json; charset=utf-8'},
+          body: jsonEncode(body),
+        )
+        .timeout(timeout);
+    _ensureStatus(res, 201);
+    return Tugas.fromJson(_decode(res) as Map<String, dynamic>);
+  }
+
+  // ---------------- Member 2 ----------------
+
+  /// GET /tugas
+  Future<List<Tugas>> fetchTasks() {
+    throw UnimplementedError('Member 2: GET /tugas');
+  }
+
+  // ---------------- Member 3 ----------------
+
+  /// GET `/tugas/<id>`
+  Future<Tugas> fetchTask(int id) {
+    throw UnimplementedError('Member 3: GET /tugas/<id>');
+  }
+
+  // ---------------- Member 4 ----------------
+    
+  /// GET /jadwal
+  Future<List<Jadwal>> fetchSchedule() {
+    throw UnimplementedError('Member 4: GET /jadwal');
+  }
+
+  // ---------------- Member 5 ----------------
+
+  /// GET /profil
+  Future<Profil> fetchProfile() {
+    throw UnimplementedError('Member 5: GET /profil');
+  }
+}
