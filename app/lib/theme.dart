@@ -1,52 +1,52 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-class _Merek {
-  static const merah = Color(0xFFE62727);
-  static const krem = Color(0xFFF3F2EC);
-  static const abu = Color(0xFFDCDCDC);
+/// Brand colors. May ONLY be used in this file.
+class _Brand {
+  static const red = Color(0xFFE62727);
+  static const cream = Color(0xFFF3F2EC);
+  static const gray = Color(0xFFDCDCDC);
   static const teal = Color(0xFF1E93AB);
 }
 
-ThemeData _bangunTema(Brightness kecerahan) {
-  final merah = ColorScheme.fromSeed(
-    seedColor: _Merek.merah,
-    brightness: kecerahan,
+ThemeData _buildTheme(Brightness brightness) {
+  final redScheme = ColorScheme.fromSeed(
+    seedColor: _Brand.red,
+    brightness: brightness,
   );
-  final teal = ColorScheme.fromSeed(
-    seedColor: _Merek.teal,
-    brightness: kecerahan,
-  );
-
-  var skema = merah.copyWith(
-    secondary: teal.primary,
-    onSecondary: teal.onPrimary,
-    secondaryContainer: teal.primaryContainer,
-    onSecondaryContainer: teal.onPrimaryContainer,
+  final tealScheme = ColorScheme.fromSeed(
+    seedColor: _Brand.teal,
+    brightness: brightness,
   );
 
-  if (kecerahan == Brightness.light) {
-    skema = skema.copyWith(
-      surface: _Merek.krem,
-      outlineVariant: _Merek.abu,
+  var scheme = redScheme.copyWith(
+    secondary: tealScheme.primary,
+    onSecondary: tealScheme.onPrimary,
+    secondaryContainer: tealScheme.primaryContainer,
+    onSecondaryContainer: tealScheme.onPrimaryContainer,
+  );
+
+  if (brightness == Brightness.light) {
+    scheme = scheme.copyWith(
+      surface: _Brand.cream,
+      outlineVariant: _Brand.gray,
     );
   }
 
-  final dasar = ThemeData(
+  final base = ThemeData(
     useMaterial3: true,
-    colorScheme: skema,
-    brightness: kecerahan,
+    colorScheme: scheme,
+    brightness: brightness,
+    fontFamily: 'PlusJakartaSans',
   );
 
-  return dasar.copyWith(
-    scaffoldBackgroundColor: skema.surface,
-    textTheme: GoogleFonts.plusJakartaSansTextTheme(dasar.textTheme),
+  return base.copyWith(
+    scaffoldBackgroundColor: scheme.surface,
     cardTheme: CardThemeData(
       elevation: 0,
-      color: skema.surfaceContainerLowest,
+      color: scheme.surfaceContainerLowest,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: skema.outlineVariant),
+        side: BorderSide(color: scheme.outlineVariant),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -56,5 +56,5 @@ ThemeData _bangunTema(Brightness kecerahan) {
   );
 }
 
-final ThemeData temaTerang = _bangunTema(Brightness.light);
-final ThemeData temaGelap = _bangunTema(Brightness.dark);
+final ThemeData lightTheme = _buildTheme(Brightness.light);
+final ThemeData darkTheme = _buildTheme(Brightness.dark);
