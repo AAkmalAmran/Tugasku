@@ -1,4 +1,4 @@
-# DESIGN.md — Tugasku (Mobile App Design)
+# Design.md — Tugasku (Mobile App Design)
 
 | Info                 | Detail                                                      |
 | :------------------- | :---------------------------------------------------------- |
@@ -6,12 +6,12 @@
 | **Group**            | Group 03 — BBK4DBB3 Mobile Application Development          |
 | **Platform**         | Android, Flutter Material 3 (Light & Dark)                  |
 | **Related document** | `PRD.md`                                                    |
-| **Author**           | Member 1 (Project Lead)                                     |
+| **Version**          | v2.3 (consistency fixes)                                    |
 | **Deadline**         | Thursday, 12 November 2026, 23:59 WIB                       |
 
-This document is the **shared visual and behavioral reference** for all five members. Every module (`form_tambah`, `tugas`, `detail`, `jadwal`, `profil`) must follow the tokens, components, and patterns here so the UI stays consistent even though five people build it.
+This document is the **shared visual and behavioral reference** for all five members. Every module (`task_form`, `tasks`, `detail`, `schedule`, `profile`) must follow the tokens, components, and patterns here so the UI stays consistent even though five people build it.
 
-> **Language note:** The app's user-facing text stays in **Indonesian** (the PRD mandates tab names such as _Hari Ini_, _Tugas_, _Jadwal_, _Profil_). Indonesian UI strings appear in quotes below, with English glosses where helpful. Code identifiers follow the PRD (`judul`, `mataKuliah`, `tenggat`, etc.).
+> **Naming & language convention:** All **file names, folder names, classes, methods, and variables use English** (e.g., `theme.dart`, `TaskCard`, `lightTheme`). The **Data Model stays in Indonesian** (`Tugas`, `Jadwal`, `Profil`, and fields such as `judul`, `mataKuliah`, `tenggat`, `selesai`; REST paths `/tugas`, `/jadwal`, `/profil`), as defined in `PRD.md`. The app's **user-facing text** is also **Indonesian** (tab names _Hari Ini_, _Tugas_, _Jadwal_, _Profil_); UI strings appear in quotes below, with English glosses where helpful.
 
 ---
 
@@ -20,7 +20,7 @@ This document is the **shared visual and behavioral reference** for all five mem
 1. **Calm first, urgent second.** A soft cream background and generous whitespace; red appears _only_ for things that need attention (deadline under 24 hours, High priority, the primary action).
 2. **One screen, one purpose.** Today = what to do now. Tasks = everything. Schedule = classes by day. Profile = summary.
 3. **Color is never the only signal.** Priority and deadlines always come with text or an icon.
-4. **All colors come from `colorScheme`.** No hex values outside `tema.dart` (rubric P06).
+4. **All colors come from `colorScheme`.** No hex values outside `theme.dart` (rubric P06).
 5. **Four mandatory states** on every data-driven screen: loading, error (+ _Coba lagi_ / Retry), empty, success.
 
 ---
@@ -87,7 +87,7 @@ Source: Color Hunt `e62727-f3f2ec-dcdcdc-1e93ab`.
 
 | Tier      | Token                       | Value / Reference                                       |
 | :-------- | :-------------------------- | :------------------------------------------------------ |
-| Global    | `brand-red/cream/gray/teal` | Hex above (exists only in `tema.dart`)                  |
+| Global    | `brand-red/cream/gray/teal` | Hex above (exists only in `theme.dart`)                 |
 | Semantic  | `action-primary`            | → `colorScheme.primary`                                 |
 |           | `on-action-primary`         | → `colorScheme.onPrimary`                               |
 |           | `screen-background`         | → `colorScheme.surface` (cream in light mode)           |
@@ -142,13 +142,13 @@ Therefore **raw teal and red are not used as small-text colors**; use the `on*` 
 
 Red serves three meanings: primary action, urgency, and (via `error`) failure. To avoid confusion:
 
-- Urgency is **always** a badge with a clock icon + the text "< 24 jam".
+- Urgency is **always** a badge with an icon + text: clock + "< 24 jam", or (overdue) warning icon + "Terlambat", same style.
 - Errors are **always** an `errorContainer` card with a warning icon + message + button.
 - Only **one** primary action per screen.
 
 ### 3.7 Typography
 
-**Custom font: Plus Jakarta Sans** (via `google_fonts`; for offline demos, download it, place it in `assets/fonts/`, and register it in `pubspec.yaml`).
+**Custom font: Plus Jakarta Sans**, bundled in `assets/fonts/` and registered in `pubspec.yaml` (works offline for the demo; see 8.1). `google_fonts` is only the fallback option.
 
 | M3 role         | Size / Weight | Used for                   |
 | :-------------- | :------------ | :------------------------- |
@@ -169,14 +169,14 @@ Rules: task titles max **2 lines** (`maxLines: 2`, `overflow: ellipsis`); notes 
 
 ### 3.9 Iconography & Motion
 
-- Icons: Material **Rounded** `Icons.*`, size 24 (20 inside chips).
+- Icons: Material `Icons.*`, Rounded variants where available (`Icons.*_rounded`), size 24 (20 inside chips). `NavigationBar` uses the outlined/filled pair listed in 4.7.
 - Motion: default Material page transitions; ticking the checkbox animates the strikethrough with `AnimatedDefaultTextStyle` (150–200 ms). No decorative animation.
 
 ---
 
 ## 4. Component Specifications (Functional Patterns)
 
-### 4.1 `KartuTugas` / Task Card (Member 2) — custom card must use `Row`, `Column`, `Expanded`, `Stack`
+### 4.1 `TaskCard` / Task Card (Member 2) — custom card must use `Row`, `Column`, `Expanded`, `Stack`
 
 ```text
 ┌──────────────────────────────────────┐
@@ -186,24 +186,25 @@ Rules: task titles max **2 lines** (`maxLines: 2`, `overflow: ellipsis`); notes 
 └──────────────────────────────────────┘
 ```
 
-| Part (anatomy) | Widget                                            | Notes                                               |
-| :------------- | :------------------------------------------------ | :-------------------------------------------------- |
-| Wrapper        | `Card` → `InkWell`                                | Tap → `Navigator.push` to Detail                    |
-| Layout         | `Stack` > `Row` > `Checkbox` + `Expanded(Column)` | Badge is `Positioned` inside the `Stack`            |
-| Checkbox       | `Checkbox`                                        | `setState` → toggle `selesai`, show `SnackBar`      |
-| Title          | `Text`                                            | `lineThrough` when `selesai`                        |
-| Course         | `Text`                                            | `bodyMedium`, `onSurfaceVariant`                    |
-| Priority chip  | small `Container` / `Chip`                        | Tint per 3.2 + **text label**                       |
-| Deadline       | `Row(Icon + Text)`                                | Format "Kam, 12 Nov 2026 · 23.59"                   |
-| < 24 h badge   | `Positioned` + `Container`                        | `primary`/`onPrimary`, `schedule` icon + "< 24 jam" |
+| Part (anatomy) | Widget                                            | Notes                                                                                            |
+| :------------- | :------------------------------------------------ | :----------------------------------------------------------------------------------------------- |
+| Wrapper        | `Card` → `InkWell`                                | Tap → `Navigator.push` to Detail                                                                 |
+| Layout         | `Stack` > `Row` > `Checkbox` + `Expanded(Column)` | Badge is `Positioned` inside the `Stack`                                                         |
+| Checkbox       | `Checkbox`                                        | `setState` → toggle `selesai`, show `SnackBar`                                                   |
+| Title          | `Text`                                            | `lineThrough` when `selesai`                                                                     |
+| Course         | `Text`                                            | `bodyMedium`, `onSurfaceVariant`                                                                 |
+| Priority chip  | small `Container` / `Chip`                        | Tint per 3.2 + **text label**                                                                    |
+| Deadline       | `Row(Icon + Text)`                                | Format "Kam, 12 Nov 2026 · 23.59"                                                                |
+| < 24 h badge   | `Positioned` + `Container`                        | `primary`/`onPrimary`, `schedule` icon + "< 24 jam"; overdue: `warning_amber` icon + "Terlambat" |
 
-**States:** default · done (title struck through, card slightly faded via `onSurface` at ~0.6 opacity) · urgent (badge) · pressed (ripple).
-**Accessibility:** wrap with `Semantics(label: 'Task {title}, due {date}, priority {p}, {status}')`.
+**States:** default · done (title struck through in `onSurfaceVariant`, checkbox in `secondary`; do **not** fade the whole card, because that drops text contrast below 4.5:1) · urgent (badge) · pressed (ripple).
+**Accessibility:** wrap with `Semantics(label: 'Tugas {judul}, tenggat {tanggal}, prioritas {prioritas}, {status}')` (Indonesian, like all UI text).
+**Hero:** `Hero(tag: 'task-<source>-<id>')`, where `<source>` is `today` or `list`. Hari Ini and Tugas are alive at the same time in the `IndexedStack`, so a plain `'task-<id>'` would be duplicated. The tag is passed to `DetailPage` as `heroTag`.
 
 ### 4.2 `PriorityChip` (read-only) & `FilterChip` (interactive)
 
 - Read-only: label "Rendah / Sedang / Tinggi" (Low / Medium / High), colors per 3.2.
-- Filter on the Tugas screen: `FilterChip` — **Semua · Belum selesai · Selesai · Tinggi** (All · Not done · Done · High). Single row, horizontally scrollable (`SingleChildScrollView`). The selected chip uses `secondaryContainer`.
+- Filter on the Tugas screen: `FilterChip` — **Semua · Belum selesai · Selesai · Tinggi** (All · Not done · Done · High). **Semua / Belum selesai / Selesai** are mutually exclusive (status); **Tinggi** is an independent toggle (priority) that combines with the chosen status. Single row, horizontally scrollable (`SingleChildScrollView`). The selected chip uses `secondaryContainer`.
 
 ### 4.3 Buttons (≥ 2 M3 types)
 
@@ -271,23 +272,26 @@ _Coba lagi_ re-invokes the `Future` (reassign it inside `setState`).
 └──────────────────────────┘
 ```
 
+- `RootNavigation` creates the single `TasksStore` and passes it to the tabs through constructors (`PRD.md` 2.6).
+
 ### 5.2 **Hari Ini** Tab (Member 2)
 
-Purpose: focus on what is urgent. _(The PRD does not detail this tab; this is an assumption — see section 9.)_
+Purpose: focus on what is urgent. _(Defined in `PRD.md` section 4.2; see also section 9.)_
 
 ```text
-Hari Ini                    Mon, 9 Nov
+Hari Ini                    Sen, 9 Nov
 ┌──────────────────────────────────┐
-│ ⚠ 2 tasks due in < 24 hours      │  ← summary (secondaryContainer)
+│ ⚠ 2 tugas jatuh tempo < 24 jam   │  ← summary (secondaryContainer)
 └──────────────────────────────────┘
-Urgent
- [KartuTugas] [KartuTugas]
-Due today
- [KartuTugas]
+Terlambat
+ [TaskCard]
+Kurang dari 24 jam
+ [TaskCard]
+ [TaskCard]
 ```
 
-- Content: **unfinished** tasks due today or in under 24 hours, sorted by nearest deadline.
-- Uses the same `KartuTugas` as the Tugas tab (one component, two contexts).
+- Content: **unfinished** tasks that are overdue or due in under 24 hours (this includes everything due later today), in two sections, each sorted by nearest deadline. A section with no items is hidden.
+- Uses the same `TaskCard` as the Tugas tab (one component, two contexts).
 - Empty: "Tidak ada tugas mendesak." (No urgent tasks.)
 
 ### 5.3 **Tugas** Tab (Member 2)
@@ -296,16 +300,16 @@ Due today
 Tugas
 [Semua][Belum selesai][Selesai][Tinggi]   ← FilterChip, horizontal scroll
 ┌────────────────────────────────┐
-│ KartuTugas                      │
+│ TaskCard                        │
 ├────────────────────────────────┤
-│ KartuTugas                      │
+│ TaskCard                        │
 └────────────────────────────────┘
                           ( + )     ← FAB → Add Form
 ```
 
 - `FutureBuilder` with 3 states + `RefreshIndicator` (pull to refresh, +2 bonus).
 - Default order: unfinished first, then nearest deadline.
-- The FAB `+` opens the **Add Form**; the `Navigator.pop(context, dataBaru)` result is added to the list and triggers a "Tugas ditambahkan" `SnackBar`.
+- The FAB `+` opens the **Add Form**; the `Navigator.pop(context, newTask)` result is added to the list and triggers a "Tugas ditambahkan" `SnackBar`.
 
 ### 5.4 **Task Detail** (Member 3)
 
@@ -316,7 +320,7 @@ Laporan Praktikum Basis Data       ← headlineSmall (struck through if done)
 ─────────────────────────────────
 Mata kuliah   Basis Data
 Tenggat       Kamis, 12 Nov 2026 · 23.59
-              ⏱ 2 days 3 hours left
+              ⏱ Sisa 2 hari 3 jam   (overdue: "Terlambat 1 hari")
 Status        Belum selesai
 Catatan
 Kerjakan bab 1–3, kumpulkan lewat LMS...
@@ -324,8 +328,9 @@ Kerjakan bab 1–3, kumpulkan lewat LMS...
 [ Tandai selesai ]   [ Kembali ]
 ```
 
-- Opened via `Navigator.push` from a card; data from `GET /tugas/<id>` (loading/error/success).
-- Primary button `FilledButton`/`.tonal` "Tandai selesai" ↔ "Tandai belum selesai"; secondary `OutlinedButton` "Kembali".
+- Opened via `Navigator.push` from a card, **receiving the `Tugas` object through its constructor** (renders instantly, works offline); `GET /tugas/<id>` may refresh it in the background and shows a subtle error + _Coba lagi_ if that fails.
+- **Hero (+3 bonus):** the task title (or priority chip) on the card and on Detail share `Hero(tag: heroTag)`, with `heroTag = 'task-<source>-<id>'` received through the constructor (see 4.1); wrap the text in `Material(type: MaterialType.transparency)` to avoid text-style glitches during the flight.
+- Primary button `FilledButton.tonal` "Tandai selesai" ↔ "Tandai belum selesai"; secondary `OutlinedButton` "Kembali".
 - Changing status returns the result to the list so both stay in sync.
 
 ### 5.5 **Add Task Form** (Member 1)
@@ -350,22 +355,22 @@ Catatan            [______________________]
 | Priority | Default **Sedang** |
 | Deadline | `showDatePicker` (`firstDate` = today); time is automatically set to **23:59** on the chosen date so the "< 24 hours" logic works |
 | Submit | `POST /tugas` → show a small `CircularProgressIndicator` in the button, button disabled |
-| After `await` | `if (!mounted) return;` → `SnackBar` "Tugas ditambahkan" → `Navigator.pop(context, dataBaru)` |
+| After `await` | `if (!mounted) return;` → `SnackBar` "Tugas ditambahkan" → `Navigator.pop(context, newTask)` |
 | Submit failure | Stay on the form, `SnackBar` "Gagal menyimpan. Coba lagi.", input is preserved |
 | Cancel | `Navigator.pop(context)` with no data |
 
-Keyboard: title field uses `textInputAction.next`; notes are multiline (3–5 lines), `TextInputType.multiline`. Wrap the form in a `SingleChildScrollView` so the keyboard does not cover fields.
+Keyboard: title field uses `TextInputAction.next`; notes are multiline (3–5 lines), `TextInputType.multiline`. Wrap the form in a `SingleChildScrollView` so the keyboard does not cover fields.
 
 ### 5.6 **Jadwal** (Schedule) Tab (Member 4)
 
 ```text
 Jadwal Kuliah
-MONDAY                                ← day header (secondary)
+SENIN                                 ← day header (secondary)
 ┌────────────────────────────────┐
 │ 07.30 – 09.10   Basis Data      │
 │ Ruang: TULT-0605                │
 └────────────────────────────────┘
-TUESDAY
+SELASA
 ┌────────────────────────────────┐
 │ 10.00 – 11.40   Pemrograman Mobile │
 │ Ruang: GKU-2.01                 │
@@ -381,17 +386,17 @@ TUESDAY
 
 ```text
         (  local asset avatar/logo  )
-           Student Name
-           Student ID · Study Program
+           Nama Mahasiswa
+           NIM · Program Studi
 ┌────────┬────────┬────────┐
 │ 12     │ 7      │ 5      │
 │ Total  │ Belum  │ Selesai│   ← task count summary
 └────────┴────────┴────────┘
-Academic info (semester, academic advisor, etc.)
+Info akademik (semester, dosen wali, SKS)
 ```
 
 - Local asset image registered in `pubspec.yaml`.
-- Summary numbers are computed from task data (and/or from `GET /profil`).
+- Summary numbers are computed **on the client** from the task list (per `PRD.md` 3.3); they are not stored in `/profil`.
 
 ---
 
@@ -418,60 +423,59 @@ Academic info (semester, academic advisor, etc.)
 
 ## 8. Flutter Implementation
 
-### 8.1 `lib/tema.dart` (owner: Member 1 — foundation, **built first**)
+### 8.1 `lib/theme.dart` (owner: Member 1 — foundation, **built first**)
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 /// Brand colors. May ONLY be used in this file.
-class _Merek {
-  static const merah = Color(0xFFE62727);
-  static const krem = Color(0xFFF3F2EC);
-  static const abu = Color(0xFFDCDCDC);
+class _Brand {
+  static const red = Color(0xFFE62727);
+  static const cream = Color(0xFFF3F2EC);
+  static const gray = Color(0xFFDCDCDC);
   static const teal = Color(0xFF1E93AB);
 }
 
-ThemeData _bangunTema(Brightness kecerahan) {
-  final merah = ColorScheme.fromSeed(
-    seedColor: _Merek.merah,
-    brightness: kecerahan,
+ThemeData _buildTheme(Brightness brightness) {
+  final redScheme = ColorScheme.fromSeed(
+    seedColor: _Brand.red,
+    brightness: brightness,
   );
-  final teal = ColorScheme.fromSeed(
-    seedColor: _Merek.teal,
-    brightness: kecerahan,
+  final tealScheme = ColorScheme.fromSeed(
+    seedColor: _Brand.teal,
+    brightness: brightness,
   );
 
   // primary = red (action/urgency), secondary = teal (info/done)
-  var skema = merah.copyWith(
-    secondary: teal.primary,
-    onSecondary: teal.onPrimary,
-    secondaryContainer: teal.primaryContainer,
-    onSecondaryContainer: teal.onPrimaryContainer,
+  var scheme = redScheme.copyWith(
+    secondary: tealScheme.primary,
+    onSecondary: tealScheme.onPrimary,
+    secondaryContainer: tealScheme.primaryContainer,
+    onSecondaryContainer: tealScheme.onPrimaryContainer,
   );
 
-  if (kecerahan == Brightness.light) {
-    skema = skema.copyWith(
-      surface: _Merek.krem,
-      outlineVariant: _Merek.abu,
+  if (brightness == Brightness.light) {
+    scheme = scheme.copyWith(
+      surface: _Brand.cream,
+      outlineVariant: _Brand.gray,
     );
   }
 
-  final dasar = ThemeData(
+  final base = ThemeData(
     useMaterial3: true,
-    colorScheme: skema,
-    brightness: kecerahan,
+    colorScheme: scheme,
+    brightness: brightness,
+    fontFamily: 'PlusJakartaSans', // bundled font, see pubspec snippet below
   );
 
-  return dasar.copyWith(
-    scaffoldBackgroundColor: skema.surface,
-    textTheme: GoogleFonts.plusJakartaSansTextTheme(dasar.textTheme),
+  return base.copyWith(
+    scaffoldBackgroundColor: scheme.surface,
     cardTheme: CardThemeData(
       elevation: 0,
-      color: skema.surfaceContainerLowest,
+      color: scheme.surfaceContainerLowest,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: skema.outlineVariant),
+        side: BorderSide(color: scheme.outlineVariant),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -481,16 +485,16 @@ ThemeData _bangunTema(Brightness kecerahan) {
   );
 }
 
-final ThemeData temaTerang = _bangunTema(Brightness.light);
-final ThemeData temaGelap = _bangunTema(Brightness.dark);
+final ThemeData lightTheme = _buildTheme(Brightness.light);
+final ThemeData darkTheme = _buildTheme(Brightness.dark);
 ```
 
 ```dart
 // main.dart
 MaterialApp(
   title: 'Tugasku',
-  theme: temaTerang,
-  darkTheme: temaGelap,
+  theme: lightTheme,
+  darkTheme: darkTheme,
   themeMode: ThemeMode.system,
   home: const RootNavigation(),
 );
@@ -498,14 +502,33 @@ MaterialApp(
 
 > Version note: `surfaceContainerLowest` and `CardThemeData` require a recent Flutter version (≥ 3.27). If `flutter analyze` complains, change `CardThemeData` → `CardTheme`, or align every member's Flutter version (`flutter --version`).
 
+`pubspec.yaml` (font + image asset):
+
+```yaml
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+  fonts:
+    - family: PlusJakartaSans
+      fonts:
+        - asset: assets/fonts/PlusJakartaSans-Regular.ttf
+        - asset: assets/fonts/PlusJakartaSans-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/PlusJakartaSans-Bold.ttf
+          weight: 700
+```
+
+> Fallback: instead of bundling, use `google_fonts` (`textTheme: GoogleFonts.plusJakartaSansTextTheme(base.textTheme)`). It needs internet on first run, so it is not recommended for the demo.
+
 ### 8.2 Using colors in widgets
 
 ```dart
-final warna = Theme.of(context).colorScheme;
+final colors = Theme.of(context).colorScheme;
 
 // correct
-Container(color: warna.primary);
-Text('Mendesak', style: TextStyle(color: warna.onPrimary));
+Container(color: colors.primary);
+Text('Mendesak', style: TextStyle(color: colors.onPrimary));
 
 // wrong (violates P06)
 Container(color: const Color(0xFFE62727));
@@ -524,27 +547,27 @@ Colors.red
 
 |  #  | Topic                           | Proposal in this document                                      | Reason                                                        |
 | :-: | :------------------------------ | :------------------------------------------------------------- | :------------------------------------------------------------ |
-|  1  | Content of the **Hari Ini** tab | Unfinished tasks due today / in < 24 h                         | The PRD only names the tab                                    |
+|  1  | Content of the **Hari Ini** tab | Unfinished tasks overdue / due in < 24 h                       | The PRD only names the tab                                    |
 |  2  | Deadline time                   | Automatically 23:59 on the chosen date                         | `showDatePicker` picks a date only, but "< 24 h" needs a time |
 |  3  | Role of red                     | Seed + primary action + urgency                                | Follows palette order; mitigated with icon + text             |
 |  4  | Teal                            | `secondary` for info/done/schedule                             | Contrasts with red and feels calming                          |
 |  5  | Date format                     | Needs the `intl` package (`id_ID`) or a manual format function | Formatted dates appear on cards and in Detail                 |
-|  6  | Font                            | Plus Jakarta Sans, preferably bundled in `assets/fonts/`       | Safe for demos without internet                               |
-|  7  | Overdue tasks                   | Shown with the same badge (they are < 24 h)                    | Keeps the PRD rule simple                                     |
+|  6  | Font                            | Plus Jakarta Sans, bundled in `assets/fonts/`                  | Safe for demos without internet; no `google_fonts` needed     |
+|  7  | Overdue tasks                   | Same badge style, text "Terlambat"                             | Overdue is not "< 24 h", so the wording must differ           |
 
 ---
 
 ## 10. UI File Ownership per Member
 
-| Member | Module                                    | Main components from this document       |
-| :----: | :---------------------------------------- | :--------------------------------------- |
-|   1    | `tema.dart`, `form_tambah/`               | Section 3 (tokens & theme), 4.3–4.6, 5.5 |
-|   2    | `tugas/` (+ Hari Ini)                     | 4.1, 4.2, 4.8, 5.2, 5.3                  |
-|   3    | `detail/`                                 | 4.3, 5.4                                 |
-|   4    | `jadwal/`                                 | 4.8, 5.6                                 |
-|   5    | `root_navigation.dart`, `profil/`, assets | 4.7, 5.1, 5.7, 8.3                       |
+| Member | Module                                     | Main components from this document       |
+| :----: | :----------------------------------------- | :--------------------------------------- |
+|   1    | `theme.dart`, `task_form/`                 | Section 3 (tokens & theme), 4.3–4.6, 5.5 |
+|   2    | `tasks/` (+ Hari Ini)                      | 4.1, 4.2, 4.8, 5.2, 5.3                  |
+|   3    | `detail/`                                  | 4.3, 5.4                                 |
+|   4    | `schedule/`                                | 4.8, 5.6                                 |
+|   5    | `root_navigation.dart`, `profile/`, assets | 4.7, 5.1, 5.7, 8.3                       |
 
-**Team rule:** Member 1 merges `tema.dart` + the shell first so everyone uses the same theme; nobody creates their own styling outside `colorScheme`.
+**Team rule:** Member 1 merges `theme.dart` + the shell first so everyone uses the same theme; nobody creates their own styling outside `colorScheme`.
 
 ---
 
@@ -552,19 +575,21 @@ Colors.red
 
 | Code             | Satisfied by this design through                                                                               |  ✔  |
 | :--------------- | :------------------------------------------------------------------------------------------------------------- | :-: |
+| P01–P02          | 8.3 (launcher name & icon), Visual QA checklist (≥ 4 screenshots)                                              | [ ] |
 | P03              | 4.2–4.6 (chips, buttons, `TextField` + dispose, `SnackBar`, `setState`)                                        | [ ] |
 | P04              | 4.1 card with `Row/Column/Expanded/Stack`, 5.3 `ListView.builder`, 4.7 `NavigationBar` 4 tabs + `IndexedStack` | [ ] |
 | P05              | 5.4 Detail, 5.5 Form + `showDatePicker` + `mounted` check                                                      | [ ] |
 | P06              | Sections 3 & 8 (`fromSeed` light/dark, colors from `colorScheme`, custom font, launcher icon, local asset)     | [ ] |
 | P07              | 4.8 _loading/error/success_ states + _Coba lagi_                                                               | [ ] |
 | Khas (Signature) | 4.1 (checkbox, strikethrough, < 24 h badge), 5.6 (schedule by day)                                             | [ ] |
-| Bonus            | 5.5 (POST to server), 5.3 (_pull-to-refresh_)                                                                  | [ ] |
+| Bonus            | 5.5 (POST to server), 5.3 (_pull-to-refresh_), 5.4 (Hero card → detail)                                        | [ ] |
 
 ### Visual QA Checklist Before Screenshots
 
 - [ ] Every screen checked in light **and** dark mode
-- [ ] No hex / `Colors.*` outside `tema.dart` (search with `grep -rn "Color(0x" lib/` and `grep -rn "Colors\." lib/`)
+- [ ] No hex / `Colors.*` outside `theme.dart` (search with `grep -rn "Color(0x" lib/` and `grep -rn "Colors\." lib/`)
 - [ ] All four tabs render correctly; tab state is kept when switching
 - [ ] Error state + _Coba lagi_ recorded for the demo
-- [ ] The < 24 h badge appears on at least one test data item
+- [ ] The < 24 h badge appears on at least one test data item, and "Terlambat" on at least one overdue item
+- [ ] Opening Detail from Hari Ini and from Tugas throws no duplicate-Hero error
 - [ ] ≥ 4 screenshots saved in `screenshots/`
