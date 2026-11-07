@@ -432,7 +432,7 @@ Consequence: P07 is the heaviest item, and a README that does not work on a clea
 
 ## 8. Deliverables & Submission Checklist **[Clarified]**
 
-- [ ] Repository link (GitHub/GitLab) — **public, or invite the lecturer** — containing `app/`, `server/`, `screenshots/`, `PRD.md`, `Design.md`, `README.md`
+- [x] Repository link (GitHub/GitLab) — **public, or invite the lecturer** — containing `app/`, `server/`, `screenshots/`, `PRD.md`, `Design.md`, `README.md`
 - [ ] **Zip file** of the repository contents **without** `build/`, `.dart_tool/`, and `android/.gradle/` (official requirement; applies to both `app/` and `server/`)
 - [ ] `README.md` (official brief, Section 6) containing: (1) group name (Kelompok 03), theme (Tugasku), and members with **name, NIM, and each member's task**; (2) how to run — the command that starts the server and `flutter run --dart-define=API_URL=...`; (3) ≥ 4 screenshots; (4) a **feature-fulfillment table with one row per checkpoint** in Section 3 of the official list (about 29 rows: P01–P02 ×5, P03 ×5, P04 ×4, P05 ×4, P06 ×5, P07 ×6) with columns **Poin · File:baris · Keterangan**, e.g. `P04 NavigationBar ≥ 3 tabs | lib/ui/root_navigation.dart:48 | Tabs Hari Ini, Tugas, Jadwal, Profil`
 - [ ] ≥ 4 screenshots in `screenshots/` (include dark mode, the Detail page, and the Error state)
@@ -442,7 +442,7 @@ Consequence: P07 is the heaviest item, and a README that does not work on a clea
 - [ ] Demo video uploaded to **YouTube (unlisted) or Google Drive**, with the link accessible to the lecturer
 - [ ] **One member** uploads everything on behalf of the group to the UTS assignment in the LMS (Pertemuan 8 section); decide who by Wed 11 Nov
 - [ ] **Commit history shows a contribution from every member** (each person commits their own slice from their own account); members without contributions can be graded separately
-- [ ] Everything submitted before Thursday, 12 November 2026, 23:59 WIB unless the LMS announces otherwise (**[Proposed]** internal cut-off: 18:00 the same day)
+- [ ] Everything submitted before Thursday, 11 November 2026, 23:59 WIB unless the LMS announces otherwise (**[Proposed]** internal cut-off: 18:00 the same day)
 
 ---
 
@@ -454,7 +454,6 @@ Consequence: P07 is the heaviest item, and a README that does not work on a clea
 | **Mon 9 Nov**  | Each member builds their endpoint + UI slice against the agreed contract (use hard-coded sample data until the server routes land).                       |
 | **Tue 10 Nov** | Finish slices and their tests; open pull requests; merge in the order from Section 10.                                                                    |
 | **Wed 11 Nov** | Integration pass, quick usability test (3 classmates), bug fixes, `flutter analyze`/`test` clean, screenshots, APK, README table.                         |
-| **Thu 12 Nov** | Morning: record demo video and final check. Submit by 18:00; the remaining time before 23:59 is buffer only.                                              |
 
 ---
 
