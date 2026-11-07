@@ -1,0 +1,19 @@
+# Dart tool, package resolution, dan build cache
+.dart_tool/
+.packages
+.pub/
+.pub-cache/
+build/
+
+# Editor & IDE (VS Code / JetBrains)
+.idea/
+.vscode/
+*.iml
+
+# File sistem operasi (Windows & macOS)
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Log & file runtime sementara
+*.log

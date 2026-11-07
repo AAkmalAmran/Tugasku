@@ -1,0 +1,68 @@
+# Miscellaneous / OS
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+Thumbs.db
+Desktop.ini
+
+# IntelliJ IDEA / Android Studio
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Visual Studio Code
+.vscode/
+
+# Dart & Flutter general
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+
+# Server-specific
+server/.dart_tool/
+server/build/
+
+# Android specific
+app/android/**/gradle-wrapper.jar
+app/android/.gradle/
+app/android/captures/
+app/android/gradlew
+app/android/gradlew.bat
+app/android/local.properties
+app/android/**/GeneratedPluginRegistrant.java
+app/android/key.properties
+*.jks
+*.keystore
+
+# iOS specific
+app/ios/**/frameworks/
+app/ios/DerivedData/
+app/ios/.symlinks/
+app/ios/Flutter/Flutter.framework
+app/ios/Flutter/Flutter.podspec
+app/ios/Flutter/Generated.xcconfig
+app/ios/Flutter/app.framework
+app/ios/ServiceDefinitions.json
+app/ios/Pods/
+app/ios/.symlinks/
+
+# Windows specific
+app/windows/flutter/ephemeral/
+app/windows/flutter/CMakeLists.txt
+app/windows/runner/Release/
+app/windows/runner/Debug/
+
+# Symbols & releases
+*.ipa
+*.aab
+*.apk
