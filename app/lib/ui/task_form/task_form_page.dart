@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import '../../data/models/tugas.dart';
 import '../../data/services/api_service.dart';
 
-/// Halaman Form Tambah Tugas (Member 1).
+/// Halaman Form Tambah Tugas
 class TaskFormPage extends StatefulWidget {
   final ApiService? apiService;
 
@@ -63,7 +63,6 @@ class _TaskFormPageState extends State<TaskFormPage> {
     );
 
     if (picked != null) {
-      // PRD 3.6 & Design.md 5.5: Jam otomatis diset ke 23:59 lokal
       final deadlineWithTime = DateTime(
         picked.year,
         picked.month,
