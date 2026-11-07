@@ -66,3 +66,5 @@ app/windows/runner/Debug/
 *.ipa
 *.aab
 *.apk
+
+progress.md

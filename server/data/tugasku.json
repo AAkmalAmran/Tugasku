@@ -120,11 +120,11 @@
     { "id": 8, "hari": "Jumat", "mataKuliah": "Pemrograman Mobile", "jamMulai": "13:00", "jamSelesai": "15:30", "ruangan": "LAB-MOB" }
   ],
   "profil": {
-    "nama": "Nama Mahasiswa",
+    "nama": "Naruto Uzumaki",
     "nim": "1234567890",
-    "programStudi": "S1 Teknologi Informasi",
-    "semester": 3,
-    "dosenWali": "Nama Dosen",
+    "programStudi": "S1 Sistem Informasi",
+    "semester": 7,
+    "dosenWali": "Kakashi Hatake",
     "sksSemesterIni": 20
   }
 }
