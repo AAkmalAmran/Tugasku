@@ -36,7 +36,14 @@ class ApiService {
 
   void _ensureStatus(http.Response res, int expected) {
     if (res.statusCode != expected) {
-      throw ApiException(res.statusCode, 'Unexpected status');
+      String message = 'Unexpected status ${res.statusCode}';
+      try {
+        final data = _decode(res);
+        if (data is Map && data['message'] is String) {
+          message = data['message'] as String;
+        }
+      } catch (_) {}
+      throw ApiException(res.statusCode, message);
     }
   }
 
