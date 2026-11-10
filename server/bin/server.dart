@@ -12,6 +12,7 @@ const _priorities = ['Rendah', 'Sedang', 'Tinggi'];
 // In-memory data, loaded from data/tugasku.json at startup.
 // Restarting the server resets everything to the seed data.
 late List<Map<String, dynamic>> _tasks;
+// ignore: unused_element
 late List<Map<String, dynamic>> _schedule;
 late Map<String, dynamic> _profile;
 
@@ -76,9 +77,8 @@ Future<Response> _createTask(Request request) async {
 
 // ---------------- Member 2 ----------------
 
-/// GET /tugas
-Response _getTasks(Request request) =>
-    _error(501, 'Belum diimplementasikan (Member 2)');
+/// GET /tugas -> 200 OK with all tasks.
+Response _getTasks(Request request) => _json(_tasks);
 
 // ---------------- Member 3 ----------------
 
@@ -94,9 +94,25 @@ Response _getSchedule(Request request) =>
 
 // ---------------- Member 5 ----------------
 
-/// GET /profil
-Response _getProfile(Request request) =>
-    _error(501, 'Belum diimplementasikan (Member 5)');
+/// GET /profil -> 200 OK with student profile.
+Response _getProfile(Request request) => _json(_profile);
+
+Middleware _corsHeaders() {
+  return (Handler innerHandler) {
+    return (Request request) async {
+      const cors = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Origin, Content-Type',
+      };
+      if (request.method == 'OPTIONS') {
+        return Response.ok('', headers: cors);
+      }
+      final response = await innerHandler(request);
+      return response.change(headers: cors);
+    };
+  };
+}
 
 Future<void> main() async {
   await _loadSeed();
@@ -108,8 +124,10 @@ Future<void> main() async {
     ..get('/jadwal', _getSchedule)
     ..get('/profil', _getProfile);
 
-  final handler =
-      const Pipeline().addMiddleware(logRequests()).addHandler(router.call);
+  final handler = const Pipeline()
+      .addMiddleware(logRequests())
+      .addMiddleware(_corsHeaders())
+      .addHandler(router.call);
 
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
   final server = await io.serve(handler, InternetAddress.anyIPv4, port);

@@ -66,8 +66,18 @@ class ApiService {
   // ---------------- Member 2 ----------------
 
   /// GET /tugas
-  Future<List<Tugas>> fetchTasks() {
-    throw UnimplementedError('Member 2: GET /tugas');
+  Future<List<Tugas>> fetchTasks() async {
+    final res = await _client
+        .get(
+          _uri('/tugas'),
+          headers: {'Content-Type': 'application/json; charset=utf-8'},
+        )
+        .timeout(timeout);
+    _ensureStatus(res, 200);
+    final list = _decode(res) as List;
+    return list
+        .map((item) => Tugas.fromJson(item as Map<String, dynamic>))
+        .toList();
   }
 
   // ---------------- Member 3 ----------------
@@ -87,7 +97,14 @@ class ApiService {
   // ---------------- Member 5 ----------------
 
   /// GET /profil
-  Future<Profil> fetchProfile() {
-    throw UnimplementedError('Member 5: GET /profil');
+  Future<Profil> fetchProfile() async {
+    final res = await _client
+        .get(
+          _uri('/profil'),
+          headers: {'Content-Type': 'application/json; charset=utf-8'},
+        )
+        .timeout(timeout);
+    _ensureStatus(res, 200);
+    return Profil.fromJson(_decode(res) as Map<String, dynamic>);
   }
 }
