@@ -77,6 +77,7 @@ void main() {
       expect(tester.widget<FilledButton>(simpanFinder).onPressed, isNotNull);
 
       // Submit form
+      await tester.ensureVisible(simpanFinder);
       await tester.tap(simpanFinder);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
