@@ -3,6 +3,7 @@ import 'package:intl/date_symbol_data_local.dart';
 
 import 'data/models/tugas.dart';
 import 'theme.dart';
+import 'ui/detail/detail_page.dart';
 import 'ui/task_form/task_form_page.dart';
 
 Future<void> main() async {
@@ -62,13 +63,38 @@ class _PlaceholderHomeState extends State<_PlaceholderHome> {
               'Tugasku',
               style: textTheme.headlineSmall?.copyWith(color: colors.primary),
             ),
-            if (_lastCreated != null) ...[
-              const SizedBox(height: 16),
-              Text(
-                'Tersimpan: #${_lastCreated!.id} ${_lastCreated!.judul}',
-                style: textTheme.bodyMedium,
+            const SizedBox(height: 16),
+            if (_lastCreated != null)
+              ActionChip(
+                avatar: const Icon(Icons.arrow_forward_rounded, size: 16),
+                label: Text(
+                  'Lihat Detail: #${_lastCreated!.id} ${_lastCreated!.judul}',
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => DetailPage(
+                        taskId: _lastCreated!.id,
+                        task: _lastCreated,
+                      ),
+                    ),
+                  );
+                },
+              )
+            else
+              FilledButton.tonalIcon(
+                icon: const Icon(Icons.visibility_outlined),
+                label: const Text('Buka Detail Tugas Demo (ID: 1)'),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const DetailPage(taskId: 1),
+                    ),
+                  );
+                },
               ),
-            ],
           ],
         ),
       ),
