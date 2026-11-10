@@ -78,7 +78,8 @@ void main() {
 
       // Submit form
       await tester.tap(simpanFinder);
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
 
       // Muncul konfirmasi SnackBar
       expect(find.text('Tugas ditambahkan'), findsOneWidget);

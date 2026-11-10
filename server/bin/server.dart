@@ -83,9 +83,8 @@ Future<Response> _createTask(Request request) async {
 
 // ---------------- Member 2 ----------------
 
-/// GET /tugas
-Response _getTasks(Request request) =>
-    _error(501, 'Belum diimplementasikan (Member 2)');
+/// GET /tugas -> 200 with all tasks as a JSON array.
+Response _getTasks(Request request) => _json(_tasks);
 
 // ---------------- Member 3 ----------------
 
