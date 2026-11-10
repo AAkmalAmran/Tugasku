@@ -105,12 +105,10 @@ class _TodayPageState extends State<TodayPage> {
       context,
       MaterialPageRoute(
         builder: (_) => DetailPage(
+          taskId: task.id,
           task: task,
           heroTag: heroTag,
           apiService: _apiService,
-          onStatusChanged: (isDone) {
-            _onToggleTaskDone(task, isDone);
-          },
         ),
       ),
     );

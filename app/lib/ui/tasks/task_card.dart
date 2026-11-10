@@ -247,7 +247,7 @@ class _TaskCardState extends State<TaskCard> {
                   ],
                 ),
               ),
-              ?badgeWidget,
+              if (badgeWidget != null) badgeWidget,
             ],
           ),
         ),
