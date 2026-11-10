@@ -64,3 +64,18 @@ flutter analyze
 flutter test
 
 ```
+
+
+---
+
+## 4. Tabel Pemenuhan Rubrik UTS (Anggota 3)
+
+| Poin Rubrik | File:baris | Keterangan |
+| :--- | :--- | :--- |
+| **P05** Halaman Detail Tugas | `app/lib/ui/detail/detail_page.dart:13` | Menampilkan seluruh data atribut tugas (judul, mata kuliah, prioritas, tenggat, status, catatan) |
+| **P05** Tombol Interaktif Ubah Status | `app/lib/ui/detail/detail_page.dart:88` | Interaksi toggle status selesai (Checkbox & `FilledButton.tonal`) + SnackBar konfirmasi |
+| **P05** Widget Test Member 3 | `app/test/detail_page_test.dart:36` | 3 widget test untuk DetailPage (render atribut & badge, toggle status, mock fetch) |
+| **P07** Endpoint `GET /tugas/<id>` | `server/bin/server.dart:86` | Mengembalikan 200 OK jika ditemukan, 404 jika tidak ada, 400 jika ID bukan integer |
+| **P07** Client REST Service | `app/lib/data/services/api_service.dart:75` | Method `fetchTask(int id)` untuk konsumsi REST API |
+| **Signature** Badge Deadline < 24 Jam & Terlambat | `app/lib/ui/detail/detail_page.dart:121` | Badge indikator jika sisa tenggat < 24 jam atau jika sudah terlambat |
+| **Bonus (+3)** Hero Animation | `app/lib/ui/detail/detail_page.dart:259` | Animasi transisi `Hero` judul tugas ke halaman detail |

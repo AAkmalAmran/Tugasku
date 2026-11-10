@@ -78,8 +78,10 @@ class ApiService {
   // ---------------- Member 3 ----------------
 
   /// GET `/tugas/<id>`
-  Future<Tugas> fetchTask(int id) {
-    throw UnimplementedError('Member 3: GET /tugas/<id>');
+  Future<Tugas> fetchTask(int id) async {
+    final res = await _client.get(_uri('/tugas/$id')).timeout(timeout);
+    _ensureStatus(res, 200);
+    return Tugas.fromJson(_decode(res) as Map<String, dynamic>);
   }
 
   // ---------------- Member 4 ----------------
