@@ -67,14 +67,9 @@ class ApiService {
 
   /// GET /tugas
   Future<List<Tugas>> fetchTasks() async {
-    final res = await _client
-        .get(
-          _uri('/tugas'),
-          headers: {'Content-Type': 'application/json; charset=utf-8'},
-        )
-        .timeout(timeout);
+    final res = await _client.get(_uri('/tugas')).timeout(timeout);
     _ensureStatus(res, 200);
-    final list = _decode(res) as List;
+    final list = _decode(res) as List<dynamic>;
     return list
         .map((item) => Tugas.fromJson(item as Map<String, dynamic>))
         .toList();
