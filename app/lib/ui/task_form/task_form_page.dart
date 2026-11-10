@@ -99,13 +99,15 @@ class _TaskFormPageState extends State<TaskFormPage> {
 
       if (!mounted) return;
 
+      setState(() => _isLoading = false);
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Tugas ditambahkan'),
         ),
       );
 
-      Navigator.pop(context, createdTask);
+      Navigator.maybePop(context, createdTask);
     } catch (_) {
       if (!mounted) return;
 

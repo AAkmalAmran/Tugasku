@@ -6,13 +6,20 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_router/shelf_router.dart';
 
-const _headers = {'Content-Type': 'application/json; charset=utf-8'};
+const _headers = {
+  'Content-Type': 'application/json; charset=utf-8',
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Origin, Content-Type',
+};
 const _priorities = ['Rendah', 'Sedang', 'Tinggi'];
 
 // In-memory data, loaded from data/tugasku.json at startup.
 // Restarting the server resets everything to the seed data.
 late List<Map<String, dynamic>> _tasks;
+// ignore: unused_element
 late List<Map<String, dynamic>> _schedule;
+// ignore: unused_element
 late Map<String, dynamic> _profile;
 
 Response _json(Object body, {int status = 200}) =>
@@ -83,8 +90,23 @@ Response _getTasks(Request request) =>
 // ---------------- Member 3 ----------------
 
 /// GET /tugas/<id> -> 200, 404 if missing, 400 if id is not an integer.
-Response _getTask(Request request, String id) =>
-    _error(501, 'Belum diimplementasikan (Member 3)');
+Response _getTask(Request request, String id) {
+  final parsedId = int.tryParse(id);
+  if (parsedId == null) {
+    return _error(400, 'ID tugas harus berupa angka');
+  }
+
+  final task = _tasks.cast<Map<String, dynamic>?>().firstWhere(
+        (t) => t?['id'] == parsedId,
+        orElse: () => null,
+      );
+
+  if (task == null) {
+    return _error(404, 'Tugas tidak ditemukan');
+  }
+
+  return _json(task);
+}
 
 // ---------------- Member 4 ----------------
 
