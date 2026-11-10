@@ -12,7 +12,9 @@ const _priorities = ['Rendah', 'Sedang', 'Tinggi'];
 // In-memory data, loaded from data/tugasku.json at startup.
 // Restarting the server resets everything to the seed data.
 late List<Map<String, dynamic>> _tasks;
+// ignore: unused_element
 late List<Map<String, dynamic>> _schedule;
+// ignore: unused_element
 late Map<String, dynamic> _profile;
 
 Response _json(Object body, {int status = 200}) =>
@@ -76,9 +78,8 @@ Future<Response> _createTask(Request request) async {
 
 // ---------------- Member 2 ----------------
 
-/// GET /tugas
-Response _getTasks(Request request) =>
-    _error(501, 'Belum diimplementasikan (Member 2)');
+/// GET /tugas -> 200 with all tasks as a JSON array.
+Response _getTasks(Request request) => _json(_tasks);
 
 // ---------------- Member 3 ----------------
 

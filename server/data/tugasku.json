@@ -104,9 +104,27 @@
       "judul": "Latihan Query SQL dengan JOIN",
       "mataKuliah": "Basis Data",
       "prioritas": "Tinggi",
-      "tenggat": "2026-11-10T23:59:00+07:00",
+      "tenggat": "2026-11-11T10:00:00+07:00",
       "selesai": false,
       "catatan": "Kerjakan 8 soal pada modul praktikum minggu 9."
+    },
+    {
+      "id": 13,
+      "judul": "Presentasi Paper Kriptografi",
+      "mataKuliah": "Jaringan Komputer",
+      "prioritas": "Tinggi",
+      "tenggat": "2026-11-11T07:30:00+07:00",
+      "selesai": false,
+      "catatan": "Siapkan slide presentasi tentang algoritma RSA, 10-15 menit."
+    },
+    {
+      "id": 14,
+      "judul": "Tugas Individu Analisis Kebutuhan",
+      "mataKuliah": "Rekayasa Perangkat Lunak",
+      "prioritas": "Sedang",
+      "tenggat": "2026-11-14T23:59:00+07:00",
+      "selesai": false,
+      "catatan": "Buat dokumen SRS sederhana untuk aplikasi pilihan sendiri."
     }
   ],
   "jadwal": [
