@@ -60,7 +60,7 @@ void main() {
 
       // Default tab adalah index 0 (Hari Ini)
       expect(
-        find.text('Tugas mendesak (< 24 jam) & terlambat'),
+        find.text('Tidak ada tugas mendesak'),
         findsOneWidget,
       );
 
@@ -77,7 +77,12 @@ void main() {
       // Ketuk tab Tugas (index 1)
       await tester.tap(find.widgetWithText(NavigationDestination, 'Tugas'));
       await tester.pumpAndSettle();
-      expect(find.text('Tab Tugas (Member 2)'), findsOneWidget);
+      expect(find.text('Belum ada tugas'), findsOneWidget);
+
+      // Ketuk tab Jadwal (index 2)
+      await tester.tap(find.widgetWithText(NavigationDestination, 'Jadwal'));
+      await tester.pumpAndSettle();
+      expect(find.text('Jadwal Kuliah'), findsOneWidget);
     },
   );
 }

@@ -9,7 +9,7 @@ import 'package:shelf_router/shelf_router.dart';
 const _headers = {
   'Content-Type': 'application/json; charset=utf-8',
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Origin, Content-Type',
 };
 const _priorities = ['Rendah', 'Sedang', 'Tinggi'];
@@ -109,9 +109,27 @@ Response _getTask(Request request, String id) {
 
 // ---------------- Member 4 ----------------
 
+/// DELETE /tugas/<id> -> 200 with deleted task, 404 if missing, 400 if id is not an integer.
+Response _deleteTask(Request request, String id) {
+  final parsedId = int.tryParse(id);
+  if (parsedId == null) {
+    return _error(400, 'ID tugas harus berupa angka');
+  }
+
+  final index = _tasks.indexWhere((t) => t['id'] == parsedId);
+  if (index == -1) {
+    return _error(404, 'Tugas tidak ditemukan');
+  }
+
+  final removed = _tasks.removeAt(index);
+  return _json({
+    'message': 'Tugas berhasil dihapus',
+    'tugas': removed,
+  }, status: 200);
+}
+
 /// GET /jadwal
-Response _getSchedule(Request request) =>
-    _error(501, 'Belum diimplementasikan (Member 4)');
+Response _getSchedule(Request request) => _json(_schedule);
 
 // ---------------- Member 5 ----------------
 
@@ -123,7 +141,7 @@ Middleware _corsHeaders() {
     return (Request request) async {
       const cors = {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Origin, Content-Type',
       };
       if (request.method == 'OPTIONS') {
@@ -142,6 +160,7 @@ Future<void> main() async {
     ..post('/tugas', _createTask)
     ..get('/tugas', _getTasks)
     ..get('/tugas/<id>', _getTask)
+    ..delete('/tugas/<id>', _deleteTask)
     ..get('/jadwal', _getSchedule)
     ..get('/profil', _getProfile);
 

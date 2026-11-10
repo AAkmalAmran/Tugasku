@@ -85,10 +85,26 @@ class ApiService {
   }
 
   // ---------------- Member 4 ----------------
+
+  /// DELETE /tugas/<id>
+  Future<void> deleteTask(int id) async {
+    final res = await _client.delete(_uri('/tugas/$id')).timeout(timeout);
+    _ensureStatus(res, 200);
+  }
     
   /// GET /jadwal
-  Future<List<Jadwal>> fetchSchedule() {
-    throw UnimplementedError('Member 4: GET /jadwal');
+  Future<List<Jadwal>> fetchSchedule() async {
+    final res = await _client
+        .get(
+          _uri('/jadwal'),
+          headers: {'Content-Type': 'application/json; charset=utf-8'},
+        )
+        .timeout(timeout);
+    _ensureStatus(res, 200);
+    final list = _decode(res) as List<dynamic>;
+    return list
+        .map((item) => Jadwal.fromJson(item as Map<String, dynamic>))
+        .toList();
   }
 
   // ---------------- Member 5 ----------------
