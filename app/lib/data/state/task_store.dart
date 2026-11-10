@@ -60,4 +60,12 @@ class TasksStore extends ChangeNotifier {
     _future = _future.then(_applyOverrides);
     notifyListeners();
   }
+
+  /// Delete task from server and remove it from store.
+  Future<void> deleteTask(int id) async {
+    await api.deleteTask(id);
+    _doneOverrides.remove(id);
+    _future = _future.then((list) => list.where((t) => t.id != id).toList());
+    notifyListeners();
+  }
 }

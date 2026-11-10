@@ -4,6 +4,8 @@ import '../../data/models/profil.dart';
 import '../../data/models/tugas.dart';
 import '../../data/services/api_service.dart';
 import '../../data/state/task_store.dart';
+import '../../data/state/theme_controller.dart';
+import '../settings/settings_page.dart';
 
 /// Halaman Profil Mahasiswa (Anggota 5)
 ///
@@ -13,11 +15,13 @@ import '../../data/state/task_store.dart';
 class ProfilePage extends StatefulWidget {
   final TasksStore tasksStore;
   final ApiService? apiService;
+  final ThemeController? themeController;
 
   const ProfilePage({
     super.key,
     required this.tasksStore,
     this.apiService,
+    this.themeController,
   });
 
   @override
@@ -50,6 +54,22 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         title: const Text('Profil'),
         centerTitle: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            tooltip: 'Pengaturan',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => SettingsPage(
+                    themeController: widget.themeController,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: FutureBuilder<Profil>(
         future: _profileFuture,
@@ -254,6 +274,39 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ],
                       ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 28),
+
+                  // Pengaturan & Preferensi
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Preferensi',
+                      style: textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: colors.onSurface,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Card(
+                    child: ListTile(
+                      leading: Icon(Icons.palette_outlined, color: colors.secondary),
+                      title: const Text('Pengaturan Tampilan & Tema'),
+                      subtitle: const Text('Mode Terang, Gelap, atau Sistem'),
+                      trailing: const Icon(Icons.chevron_right_rounded),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => SettingsPage(
+                              themeController: widget.themeController,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],
