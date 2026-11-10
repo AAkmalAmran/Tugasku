@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../data/models/tugas.dart';
 import '../data/services/api_service.dart';
 import '../data/state/task_store.dart';
 import 'profile/profile_page.dart';
-import 'task_form/task_form_page.dart';
+import 'tasks/today_page.dart';
+import 'tasks/tasks_page.dart';
 
 /// Root shell aplikasi Tugasku dengan NavigationBar (4 Tab) dan IndexedStack.
 ///
@@ -14,8 +14,9 @@ import 'task_form/task_form_page.dart';
 /// 3. Menyediakan navigasi Material 3 [NavigationBar]
 class RootNavigation extends StatefulWidget {
   final TasksStore? tasksStore;
+  final ApiService? apiService;
 
-  const RootNavigation({super.key, this.tasksStore});
+  const RootNavigation({super.key, this.tasksStore, this.apiService});
 
   @override
   State<RootNavigation> createState() => _RootNavigationState();
@@ -23,17 +24,19 @@ class RootNavigation extends StatefulWidget {
 
 class _RootNavigationState extends State<RootNavigation> {
   int _currentIndex = 0;
+  late final ApiService _apiService;
   late final TasksStore _tasksStore;
   late final bool _internalStore;
 
   @override
   void initState() {
     super.initState();
+    _apiService = widget.apiService ?? ApiService();
     if (widget.tasksStore != null) {
       _tasksStore = widget.tasksStore!;
       _internalStore = false;
     } else {
-      _tasksStore = TasksStore(api: ApiService());
+      _tasksStore = TasksStore(api: _apiService);
       _internalStore = true;
     }
   }
@@ -60,13 +63,12 @@ class _RootNavigationState extends State<RootNavigation> {
       body: IndexedStack(
         index: _currentIndex,
         children: [
-          _TabPlaceholder(
-            title: 'Hari Ini',
-            subtitle: 'Tugas mendesak (< 24 jam) & terlambat',
-            icon: Icons.today_rounded,
+          TodayPage(
+            apiService: _apiService,
             tasksStore: _tasksStore,
           ),
-          _TasksTabPlaceholder(
+          TasksPage(
+            apiService: _apiService,
             tasksStore: _tasksStore,
           ),
           _TabPlaceholder(
@@ -106,78 +108,6 @@ class _RootNavigationState extends State<RootNavigation> {
             label: 'Profil',
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// Placeholder view untuk tab tugas lengkap dengan FAB tambah tugas.
-class _TasksTabPlaceholder extends StatelessWidget {
-  final TasksStore tasksStore;
-
-  const _TasksTabPlaceholder({required this.tasksStore});
-
-  Future<void> _openAddTask(BuildContext context) async {
-    final newTask = await Navigator.push<Tugas>(
-      context,
-      MaterialPageRoute(builder: (_) => const TaskFormPage()),
-    );
-    if (newTask != null) {
-      tasksStore.addTask(newTask);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Daftar Tugas'),
-        centerTitle: false,
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.assignment_outlined,
-                size: 64,
-                color: colors.primary,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Tab Tugas (Member 2)',
-                style: textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: colors.onSurface,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Daftar tugas dengan filter, checkbox selesai, dan penanda < 24 jam.',
-                textAlign: TextAlign.center,
-                style: textTheme.bodyMedium?.copyWith(
-                  color: colors.onSurfaceVariant,
-                ),
-              ),
-              const SizedBox(height: 20),
-              FilledButton.icon(
-                onPressed: () => _openAddTask(context),
-                icon: const Icon(Icons.add),
-                label: const Text('Tambah Tugas Baru'),
-              ),
-            ],
-          ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _openAddTask(context),
-        tooltip: 'Tambah tugas',
-        child: const Icon(Icons.add),
       ),
     );
   }
