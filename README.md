@@ -82,7 +82,7 @@ flutter test
 | **Ahmad Akmal Amran**       | 102022300010 | `POST /tugas`                | Form Tambah Tugas + DatePicker          | 1 Widget Test (Form)      |
 | **Aucklandia Nayla Izzati** | 102022300409 | `GET /tugas`                 | Tab Tugas & Hari Ini (List + Checkbox)  | 1 Widget Test (Card/List) |
 | **Annisa Fatiimatus Zahro** | 102022330350 | `GET /tugas/<id>`            | Halaman Detail Tugas                    | 1 Widget Test (Detail)    |
-| **Aisah Kurniawati Putri**  | 102022300111 | `GET /jadwal`                | Tab Jadwal (Kelompok per hari)          | 1 MockClient Service Test |
+| **Aisah Kurniawati Putri**  | 102022300111 | `GET /jadwal` & `DELETE /tugas/<id>` | Tab Jadwal Kuliah & Pengaturan Tema (M3) | 1 MockClient Service Test + Widget Tests |
 | **Raafi Naufal Fadhillah**  | 102022300053 | `GET /profil`                | Tab Profil + Root NavigationBar (4 Tab) | Integrasi & QA Test       |
 
 ---
@@ -95,12 +95,16 @@ flutter test
 | **P03** Widget dasar & input     | `app/lib/ui/task_form/task_form_page.dart:141`                                | TextField, TextEditingController.dispose, SegmentedButton, SnackBar              |
 | **P04** Model & Navigasi Bawah   | `app/lib/ui/root_navigation.dart:73`                                          | NavigationBar 4 tab (Hari Ini, Tugas, Jadwal, Profil) & IndexedStack             |
 | **P04** Model Data               | `app/lib/data/models/tugas.dart:1`                                            | Model Tugas 7 field termasuk DateTime tenggat dan bool selesai                   |
+| **P04** Fitur Khas Jadwal Kuliah | `app/lib/ui/schedule/schedule_page.dart:14`                                   | Menampilkan jadwal kuliah mingguan dikelompokkan per hari (Senin–Sabtu)          |
 | **P05** Navigasi & Result Pop    | `app/lib/ui/task_form/task_form_page.dart:108`                                | Navigator.pop(context, createdTask) dengan async/await & mounted check           |
 | **P05** Widget Tests             | `app/test/root_navigation_test.dart:40`, `app/test/profile_page_test.dart:58` | Widget tests lulus uji navigasi 4 tab & render profil                            |
+| **P05** Automated Test Anggota 4 | `app/test/schedule_page_test.dart:28`, `app/test/settings_page_test.dart:45`  | Unit test MockClient GET /jadwal (sukses & error) dan widget test Jadwal & Pengaturan |
 | **P06** Tema Material 3 & Aset   | `app/lib/theme.dart:11`, `app/pubspec.yaml:26`                                | ColorScheme.fromSeed (Light & Dark), font PlusJakartaSans, aset avatar.png       |
+| **P06** Fitur Pengaturan & Tema M3 | `app/lib/ui/settings/settings_page.dart:10`, `app/lib/data/state/theme_controller.dart:6` | Pilihan tema interaktif (Terang, Gelap, Sistem) real-time tersimpan di SharedPreferences |
 | **P07** Server Dart Shelf        | `server/bin/server.dart:97`                                                   | Server Shelf & Router, data awal 12 item JSON, endpoint GET /profil              |
-| **P07** FutureBuilder 3 State    | `app/lib/ui/profile/profile_page.dart:55`                                     | Menangani kondisi memuat (loading), gagal (error + tombol Coba lagi), dan sukses |
+| **P07** FutureBuilder 3 State    | `app/lib/ui/profile/profile_page.dart:55`, `app/lib/ui/schedule/schedule_page.dart:39` | Menangani kondisi memuat (loading), gagal (error + tombol Coba lagi), dan sukses |
 | **P07** Membaca API_URL          | `app/lib/data/services/api_service.dart:23`                                   | Mengambil base URL dari String.fromEnvironment('API_URL')                        |
+| **P07** Endpoint Jadwal & Delete | `server/bin/server.dart:113`, `server/bin/server.dart:132`                    | Endpoint DELETE /tugas/<id> (status 200, 404, 400) dan GET /jadwal              |
 
 ## Screenshot Aplikasi
 
